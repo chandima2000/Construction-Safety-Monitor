@@ -88,7 +88,7 @@ Safty-Monitor-System/
 
 - **5,170 source images** (5,140 base + 30 custom)
 - **11 classes:** helmet, no-helmet, vest, no-vest, goggles, no-goggles, boots, no-boots, gloves, no-gloves, person
-- **Base dataset:** [PPE Detection by testcasque on Roboflow Universe](https://universe.roboflow.com/testcasque)
+- **Base dataset:** [PPE Detection by testcasque on Roboflow Universe](https://universe.roboflow.com/testcasque/ppe-detection-qlq3d)
 - **Custom data:** 30 YouTube construction site screenshots targeting violation scenarios
 
 See [`docs/dataset.md`](docs/dataset.md) for full documentation.
