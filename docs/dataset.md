@@ -28,7 +28,7 @@
 
 | Property | Detail |
 |---|---|
-| **Source** | [PPE Detection Dataset by testcasque](https://universe.roboflow.com/testcasque) |
+| **Source** | [PPE Detection Dataset by testcasque](https://universe.roboflow.com/testcasque/ppe-detection-qlq3d) |
 | **License** | Roboflow Universe Public |
 | **Original classes** | 10 (helmet, no-helmet, vest, no-vest, goggles, no-goggles, boots, no-boots, gloves, no-gloves) |
 | **Why selected** | Largest consistently-annotated PPE dataset with balanced positive/negative classes |
