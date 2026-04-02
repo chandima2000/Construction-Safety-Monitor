@@ -39,8 +39,23 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### Run Inference (once model is trained)
+> **Note on Model Weights:** 
+> 1. The custom PPE model (`best.pt`) is included in the repo inside the `models/` folder.
+> 2. The standard COCO `yolov8n.pt` base model (used for fallback localization) will **automatically download** from Ultralytics on your very first inference run.
 
+### Run Inference
+
+You can quickly test the detection engine using the provided sample images:
+
+```bash
+# Run the demo on the entire sample images folder (outputs JSON and annotated images)
+python src/run_demo.py --source data/test_images/
+
+# Run the demo and display the results in a live window
+python src/run_demo.py --source data/test_images/ --show
+```
+
+Or, run inference on your own custom media:
 ```bash
 # On a single image
 python src/inference.py --source path/to/image.jpg
@@ -51,7 +66,6 @@ python src/inference.py --source path/to/video.mp4
 # On webcam
 python src/inference.py --source 0
 ```
-
 ---
 
 ## Project Structure
@@ -81,8 +95,6 @@ Safty-Monitor-System/
 │   ├── alerts.py            # Alert & report generation
 │   └── run_demo.py          # Quick demo script
 │
-├── config/
-│   └── secrets.yaml         # API keys (NOT committed to GitHub)
 │
 ├── requirements.txt
 └── README.md
@@ -197,12 +209,3 @@ See [`docs/training_results.md`](docs/training_results.md) for full analysis, tr
 6. Download `best.pt` from `/content/runs/safety_monitor_v1/weights/`
 
 ---
-
-## Development Timeline
-
-| Day | Focus | Status |
-|---|---|---|
-| Day 1 | Dataset collection, annotation, documentation | ✅ Complete |
-| Day 2 | Model training (YOLOv8 fine-tuning) | ✅ Complete — mAP50: 0.534 |
-| Day 3 | Inference pipeline + violation alert generation | ✅ Complete — see [`docs/inference_pipeline.md`](docs/inference_pipeline.md) |
-| Day 4 | Evaluation, final documentation, submission | ⬜ Pending |
