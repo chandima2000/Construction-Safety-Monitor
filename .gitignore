@@ -1,0 +1,21 @@
+.venv/
+__pycache__
+# API Keys & Secrets (NEVER commit these)
+config/secrets.yaml
+*.env
+.env
+
+# Model weights (too large for git)
+*.pt
+!models/best.pt
+
+*.onnx
+runs/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+_bmad/
+.agent/
+requirement/
+docs/day1_guide.md
