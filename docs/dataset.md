@@ -5,7 +5,8 @@
 **Version:** v1-ppe-5170img-11cls-640px  
 **Generated:** 2026-04-01  
 **Format:** YOLOv8 (TXT annotations + YAML config)  
-**Platform:** Roboflow Universe
+**Platform:** Roboflow Universe  
+**Public Dataset:** [View on Roboflow →](https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1)
 
 ---
 
@@ -26,6 +27,9 @@
 
 ### 2.1 Base Dataset — Roboflow Universe (5,140 images)
 
+> **Our combined dataset (base + custom) is publicly accessible:**  
+> 👉 [https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1](https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1)
+
 | Property | Detail |
 |---|---|
 | **Source** | [PPE Detection Dataset by testcasque](https://universe.roboflow.com/testcasque/ppe-detection-qlq3d) |
@@ -39,9 +43,9 @@ This dataset was chosen because:
 - High annotation quality and consistency across all 10 classes
 - YOLOv8-compatible format directly exportable from Roboflow
 
-### 2.2 Custom Additions — YouTube Construction Footage (30 images)
+### 2.2 Custom Additions — Web Browsing (30 images)
 
-30 custom images were collected from YouTube construction site video footage to:
+30 custom images were collected from web browsing searches to:
 1. Satisfy the assignment's "custom dataset" requirement
 2. Address class imbalances in the base dataset
 3. Add environment diversity not present in the base
@@ -55,9 +59,8 @@ This dataset was chosen because:
 | Batch 5 — Safe scenes | 028–030 (3 images) | Fully compliant workers (balanced safe/unsafe) |
 
 **Custom image collection method:**
-- YouTube search queries targeting specific violation scenarios
-- Screenshots captured at 1920×1080 or higher resolution
-- Screenshots saved as JPEG from full-screen video frames
+- Web image search queries targeting specific violation scenarios
+- Images downloaded in JPEG or PNG format at high resolution
 - Stored in: `data/raw/custom/custom_001.jpg` through `custom_030.jpg`
 
 **Custom image quality criteria:**
@@ -151,7 +154,7 @@ Applied to the **training set only** (validation and test sets are un-augmented)
 | Horizontal flip | Enabled | Workers face left or right equally |
 | Rotation | ±15° | Slight camera tilt variation |
 | Brightness | ±25% | Lighting variation (cloudy/sunny/indoor) |
-| Blur | Up to 1.5px | Simulates video frame quality |
+| Blur | Up to 1.5px | Simulates lower quality web imagery |
 
 > **Note:** 90° rotation was explicitly **excluded** — construction site cameras are fixed, so rotated workers would be unrealistic training examples.
 
@@ -163,7 +166,18 @@ Augmentation multiplier: **3× per training image**
 
 ## 8. Reproducibility
 
-To recreate this exact dataset:
+### View the dataset online (no account required)
+
+👉 **[https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1](https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1)**
+
+The public Roboflow link shows:
+- All source images with bounding box annotations
+- Class distribution charts
+- Dataset split (train / val / test)
+- Augmentation settings applied
+- Version history
+
+### Download programmatically
 
 ```python
 from roboflow import Roboflow
@@ -185,4 +199,4 @@ Dataset version name: `v1-ppe-5170img-11cls-640px`
 | `no-boots`, `no-gloves` heavily underrepresented | Model may miss these violations | Targeted augmentation + future collection |
 | `custom_015.jpg` has white studio background | Minor — slightly unrealistic scene context | Documented; impact expected to be minimal |
 | Dataset is scene-level, not worker-level | Can't attribute violations to specific workers | `person` class intended to solve this |
-| No temporal data (video sequences) | Cannot detect behavioural patterns | Future: video inference pipeline |
+| No temporal data | Cannot detect behavioural patterns | Future: video inference pipeline |
