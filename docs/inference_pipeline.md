@@ -2,9 +2,6 @@
 
 ## Construction Safety Monitor
 
-**Author:** Chandima Maduwantha  
-
----
 
 ## Overview
 

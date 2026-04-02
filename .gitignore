@@ -16,6 +16,7 @@ runs/
 .ipynb_checkpoints/
 
 _bmad/
+_bmad-output/
 .agent/
 requirement/
 docs/day1_guide.md
