@@ -62,9 +62,6 @@ python src/inference.py --source path/to/image.jpg
 
 # On a video file
 python src/inference.py --source path/to/video.mp4
-
-# On webcam
-python src/inference.py --source 0
 ```
 ---
 

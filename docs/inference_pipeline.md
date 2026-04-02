@@ -5,7 +5,7 @@
 
 ## Overview
 
-This document details the architecture and usage of the Construction Safety Monitor's inference pipeline. The system takes the trained YOLOv8 model (`best.pt`) and applies it to real-world images, video streams, or live webcam feeds to detect safety violations and generate actionable compliance reports.
+This document details the architecture and usage of the Construction Safety Monitor's inference pipeline. The system takes the trained YOLOv8 model (`best.pt`) and applies it to real-world images or video frames to detect safety violations and generate actionable compliance reports.
 
 The pipeline comprises four core Python modules located in the `src/` directory:
 
@@ -23,7 +23,7 @@ The pipeline comprises four core Python modules located in the `src/` directory:
 The pipeline processes input media frame by frame, separating object detection from the safety evaluation logic. This modular design allows safety protocols to be updated without retraining the computer vision model.
 
 ```
-[Input Media: Image/Video/Live]
+[Input Media: Image/Video]
         │
         ▼
   ┌───────────────┐
@@ -92,9 +92,6 @@ python src/inference.py --source data/test_images/
 
 # Process video footage
 python src/inference.py --source data/videos/site_footage.mp4
-
-# Run on a live webcam (camera index 0)
-python src/inference.py --source 0
 
 # Enable comprehensive JSON reporting
 python src/inference.py --source data/test_images/ --save-json
