@@ -29,7 +29,7 @@ pip
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Safty-Monitor-System.git
+git clone https://github.com/chandima2000/Construction-Safety-Monitor.git
 cd Safty-Monitor-System
 
 python -m venv .venv
@@ -60,20 +60,26 @@ python src/inference.py --source 0
 Safty-Monitor-System/
 │
 ├── data/
-│   └── raw/custom/          # 30 custom YouTube-sourced images
+│   ├── raw/custom/          # 30 custom web-sourced images
+│   └── test_images/         # Sample images to quickly test run_demo.py
 │
 ├── docs/
-│   ├── day1_guide.md        # Day 1 setup walkthrough
 │   ├── dataset.md           # Dataset documentation
-│   └── safety_rules.md      # Safety rules definition
+│   ├── inference_pipeline.md # Inference pipeline documentation
+│   ├── safety_rules.md      # Safety rules definition
+│   └── training_results.md  # Training metrics & analysis
 │
-├── roboflow/
-│   └── train_yolov8_object_detection_on_custom_dataset.ipynb
+├── models/
+│   └── best.pt              # Custom trained YOLOv8 nano PPE model
 │
-├── src/                     # Inference pipeline (Day 3)
-│   ├── inference.py
-│   ├── rules.py
-│   └── alerts.py
+├── research/
+│   └── model_training.ipynb
+│
+├── src/                     # Inference pipeline codebase
+│   ├── inference.py         # Main CLI — image/video/webcam processing
+│   ├── rules.py             # Safety rule engine
+│   ├── alerts.py            # Alert & report generation
+│   └── run_demo.py          # Quick demo script
 │
 ├── config/
 │   └── secrets.yaml         # API keys (NOT committed to GitHub)
@@ -89,7 +95,8 @@ Safty-Monitor-System/
 - **5,170 source images** (5,140 base + 30 custom)
 - **11 classes:** helmet, no-helmet, vest, no-vest, goggles, no-goggles, boots, no-boots, gloves, no-gloves, person
 - **Base dataset:** [PPE Detection by testcasque on Roboflow Universe](https://universe.roboflow.com/testcasque/ppe-detection-qlq3d)
-- **Custom data:** 30 YouTube construction site screenshots targeting violation scenarios
+- **Custom data:** 30 web browsing images targeting violation scenarios
+- **📂 Public dataset with annotations:** [View on Roboflow →](https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1)
 
 See [`docs/dataset.md`](docs/dataset.md) for full documentation.
 
@@ -120,7 +127,7 @@ See [`docs/safety_rules.md`](docs/safety_rules.md) for full definitions, complia
 - **Input size:** 640×640
 - **Confidence threshold:** 0.45
 
-Training notebook: `roboflow/train_yolov8_object_detection_on_custom_dataset.ipynb`
+Training notebook: `research/model_training.ipynb`
 
 ---
 
@@ -128,10 +135,10 @@ Training notebook: `roboflow/train_yolov8_object_detection_on_custom_dataset.ipy
 
 | Decision | Rationale |
 |---|---|
-| YOLOv8n over YOLOv8x | 4-day deadline; nano trains 8× faster with ~5% less accuracy |
+| YOLOv8n over YOLOv8x | nano trains 8× faster with ~5% less accuracy |
 | Confidence threshold 0.45 | Balances false positives vs false negatives for safety context |
-| Extended existing dataset vs pure custom | 5,000 images was needed; 4 days wasn't enough to collect and annotate from scratch |
-| Scene-level detection (not per-worker) | Simpler to implement; `person` class added for future per-worker attribution |
+| Extended existing dataset vs pure custom | 5,000 images was needed; 7 days wasn't enough to collect and annotate from scratch |
+| Multi-Model Architecture | Base dataset lacked unannotated 'person' instances. Using standard COCO YOLOv8n alongside our custom PPE model guarantees perfect worker detection natively. |
 | Both PPE-present and PPE-absent classes | Needed to distinguish "worker compliant" from "worker visible but non-compliant" |
 
 ---
@@ -148,17 +155,46 @@ Training notebook: `roboflow/train_yolov8_object_detection_on_custom_dataset.ipy
 
 ## Evaluation Results
 
-> *(To be filled after Day 2 training — mAP50, precision, recall per class)*
+Training completed: **22/50 epochs** (early stopping), **1.251 hours** on T4 GPU.
+
+### Overall Metrics (Validation Set — 1,026 images, 4,307 instances)
+
+| Metric | Value |
+|---|---|
+| Precision | 0.677 |
+| Recall | 0.385 |
+| **mAP50** | **0.534** |
+| mAP50-95 | 0.363 |
+
+### Per-Class mAP50
+
+| Class | mAP50 | Notes |
+|---|---|---|
+| `helmet` | **0.941** | ✅ Production-quality |
+| `vest` | **0.929** | ✅ Production-quality |
+| `boots` | **0.907** | ✅ Production-quality |
+| `no-vest` | **0.627** | 🟡 Working violation class |
+| `goggles` | 0.524 | 🟡 Moderate |
+| `gloves` | 0.510 | 🟠 Low recall |
+| `no-helmet` | 0.505 | 🟠 Very low recall (R=0.009) |
+| `no-goggles` | 0.400 | 🟠 Low |
+| `no-boots` | 0 | ❌ Insufficient training data (36 val instances) |
+| `no-gloves` | 0 | ❌ Insufficient training data (51 val instances) |
+
+**Inference speed:** ~4.6ms per image on T4 (≈217 FPS)
+
+See [`docs/training_results.md`](docs/training_results.md) for full analysis, training curves, confusion matrix interpretation, and planned improvements.
 
 ---
 
 ## Reproducing Results
 
-1. Download dataset via Roboflow (see `docs/dataset.md` for snippet)
-2. Open `roboflow/train_yolov8_object_detection_on_custom_dataset.ipynb` in Google Colab
-3. Enable T4 GPU runtime
-4. Run all cells in order
-5. Download `best.pt` from `runs/safety_monitor_v1/weights/`
+1. **View the dataset:** [Roboflow Project v1](https://app.roboflow.com/chandimas-workspace/construction-safety-monitor-mlpd4/1) — all annotations are publicly visible
+2. **Download dataset** via the Roboflow Python snippet in `docs/dataset.md`
+3. **Open the notebook:** [`research/model_training.ipynb`](research/model_training.ipynb) in Google Colab
+4. **Enable T4 GPU:** Runtime → Change runtime type → T4 GPU
+5. **Run all cells** in order — training completes in ~1.25 hours
+6. Download `best.pt` from `/content/runs/safety_monitor_v1/weights/`
 
 ---
 
@@ -167,6 +203,6 @@ Training notebook: `roboflow/train_yolov8_object_detection_on_custom_dataset.ipy
 | Day | Focus | Status |
 |---|---|---|
 | Day 1 | Dataset collection, annotation, documentation | ✅ Complete |
-| Day 2 | Model training (YOLOv8 fine-tuning) | 🔄 In Progress |
-| Day 3 | Inference pipeline + violation alert generation | ⬜ Pending |
+| Day 2 | Model training (YOLOv8 fine-tuning) | ✅ Complete — mAP50: 0.534 |
+| Day 3 | Inference pipeline + violation alert generation | ✅ Complete — see [`docs/inference_pipeline.md`](docs/inference_pipeline.md) |
 | Day 4 | Evaluation, final documentation, submission | ⬜ Pending |
